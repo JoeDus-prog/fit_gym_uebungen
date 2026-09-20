@@ -34,6 +34,10 @@ export function getWorkouts() {
   return Array.isArray(workouts) ? workouts : [];
 }
 
+export function saveWorkouts(workouts) {
+  writeJSON(WORKOUTS_KEY, Array.isArray(workouts) ? workouts : []);
+}
+
 export function upsertWorkout(workout) {
   const workouts = getWorkouts();
   const index = workouts.findIndex((w) => w.id === workout.id);

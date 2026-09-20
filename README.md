@@ -18,6 +18,7 @@ Die App läuft direkt im Browser auf dem Android-Smartphone, ist offlinefähig u
   - Gesamtstatistik (Trainings, dokumentierte Sätze, Volumen in kg)
   - Auswertung pro Trainingstag
   - Liste der vergangenen Trainings, jedes Training ist nachträglich bearbeitbar
+  - **Export/Import**: Sicherung der Daten als JSON-Datei, Import ersetzt die Daten auf dem Gerät
 
 ## Nutzung auf dem Android-Smartphone
 

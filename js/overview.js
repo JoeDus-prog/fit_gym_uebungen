@@ -1,5 +1,6 @@
 import { getPlan, getWorkouts } from './store.js';
-import { esc, formatDate, volumeOf, numberFormat } from './util.js';
+import { exportData, importData } from './data.js';
+import { esc, formatDate, volumeOf, numberFormat, toast } from './util.js';
 
 function summarizeWorkout(workout) {
   const sets = workout.entries.reduce((n, e) => n + e.sets.length, 0);
@@ -52,6 +53,36 @@ export function renderOverview(container, refresh) {
       }).join('')}
     </ul>`;
   container.appendChild(dayStats);
+
+  const dataCard = document.createElement('section');
+  dataCard.className = 'card data-card';
+  dataCard.innerHTML = `
+    <h2>Daten sichern</h2>
+    <p class="muted">Sicherung als JSON-Datei exportieren oder eine frühere Sicherung importieren. Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt.</p>
+    <div class="row-actions">
+      <button class="btn secondary" data-action="export">Export</button>
+      <label class="btn secondary file-label">Import
+        <input type="file" accept="application/json,.json" data-action="import" hidden>
+      </label>
+    </div>`;
+  dataCard.querySelector('[data-action="export"]').addEventListener('click', exportData);
+  dataCard.querySelector('input[data-action="import"]').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    if (getPlan().days.length > 0 || getWorkouts().length > 0) {
+      const ok = confirm('Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt. Fortfahren?');
+      if (!ok) return;
+    }
+    try {
+      const result = await importData(file);
+      toast(`Import erfolgreich: ${result.days} Trainingstag(e), ${result.workouts} Training(s)`);
+      location.reload();
+    } catch (error) {
+      alert(error.message || 'Import fehlgeschlagen');
+    }
+  });
+  container.appendChild(dataCard);
 
   const list = document.createElement('section');
   list.className = 'workout-list';

@@ -205,6 +205,14 @@ input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 .day-pick-card { padding: 0; }
 .picker-title { margin: 4px 2px 12px; font-size: 1.05rem; }
 
+.data-card .muted { margin: 0 0 4px; }
+
+.file-label {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
 .toast {
   position: fixed;
   bottom: 96px;
