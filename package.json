@@ -1,0 +1,7 @@
+{
+  "name": "gym-trainingsplan",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PWA zum Dokumentieren von Krafttraining gemäß Übungsplan"
+}
