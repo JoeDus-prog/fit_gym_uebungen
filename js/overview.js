@@ -10,6 +10,38 @@ function summarizeWorkout(workout) {
   return { sets, done };
 }
 
+function appendDataCard(container) {
+  const dataCard = document.createElement('section');
+  dataCard.className = 'card data-card';
+  dataCard.innerHTML = `
+    <h2>Daten sichern</h2>
+    <p class="muted">Sicherung als JSON-Datei exportieren oder eine frühere Sicherung importieren. Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt.</p>
+    <div class="row-actions">
+      <button class="btn secondary" data-action="export">Export</button>
+      <label class="btn secondary file-label">Import
+        <input type="file" accept="application/json,.json" data-action="import" hidden>
+      </label>
+    </div>`;
+  dataCard.querySelector('[data-action="export"]').addEventListener('click', exportData);
+  dataCard.querySelector('input[data-action="import"]').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    if (getPlan().days.length > 0 || getWorkouts().length > 0) {
+      const ok = confirm('Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt. Fortfahren?');
+      if (!ok) return;
+    }
+    try {
+      const result = await importData(file);
+      toast(`Import erfolgreich: ${result.days} Trainingstag(e), ${result.workouts} Training(s)`);
+      location.reload();
+    } catch (error) {
+      alert(error.message || 'Import fehlgeschlagen');
+    }
+  });
+  container.appendChild(dataCard);
+}
+
 export function renderOverview(container, refresh) {
   const workouts = [...getWorkouts()].sort((a, b) => (a.date < b.date ? 1 : -1));
   const plan = getPlan();
@@ -20,6 +52,7 @@ export function renderOverview(container, refresh) {
         <h2>Noch keine Trainings dokumentiert</h2>
         <p>Starte über den Reiter „Training“ ein Training aus deinem Übungsplan. Hier erscheint danach die Übersicht.</p>
       </section>`;
+    appendDataCard(container);
     return;
   }
 
@@ -54,35 +87,7 @@ export function renderOverview(container, refresh) {
     </ul>`;
   container.appendChild(dayStats);
 
-  const dataCard = document.createElement('section');
-  dataCard.className = 'card data-card';
-  dataCard.innerHTML = `
-    <h2>Daten sichern</h2>
-    <p class="muted">Sicherung als JSON-Datei exportieren oder eine frühere Sicherung importieren. Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt.</p>
-    <div class="row-actions">
-      <button class="btn secondary" data-action="export">Export</button>
-      <label class="btn secondary file-label">Import
-        <input type="file" accept="application/json,.json" data-action="import" hidden>
-      </label>
-    </div>`;
-  dataCard.querySelector('[data-action="export"]').addEventListener('click', exportData);
-  dataCard.querySelector('input[data-action="import"]').addEventListener('change', async (event) => {
-    const file = event.target.files[0];
-    event.target.value = '';
-    if (!file) return;
-    if (getPlan().days.length > 0 || getWorkouts().length > 0) {
-      const ok = confirm('Beim Import werden die aktuellen Daten auf diesem Gerät ersetzt. Fortfahren?');
-      if (!ok) return;
-    }
-    try {
-      const result = await importData(file);
-      toast(`Import erfolgreich: ${result.days} Trainingstag(e), ${result.workouts} Training(s)`);
-      location.reload();
-    } catch (error) {
-      alert(error.message || 'Import fehlgeschlagen');
-    }
-  });
-  container.appendChild(dataCard);
+  appendDataCard(container);
 
   const list = document.createElement('section');
   list.className = 'workout-list';
