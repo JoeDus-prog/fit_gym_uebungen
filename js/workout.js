@@ -29,8 +29,8 @@ function renderSetRows(entry) {
     </tr>`).join('');
 }
 
-function bindWorkoutEvents(container, workout, refresh) {
-  container.addEventListener('input', (event) => {
+function bindWorkoutEvents(root, workout, refresh) {
+  root.addEventListener('input', (event) => {
     const row = event.target.closest('.set-row');
     if (!row) return;
     const entry = workout.entries.find((e) => e.exerciseId === row.dataset.entry);
@@ -38,13 +38,13 @@ function bindWorkoutEvents(container, workout, refresh) {
     entry.sets[Number(row.dataset.index)][event.target.dataset.field] = event.target.value;
   });
 
-  container.addEventListener('change', (event) => {
+  root.addEventListener('change', (event) => {
     if (event.target.matches('[data-workout-field]')) {
       workout[event.target.dataset.workoutField] = event.target.value;
     }
   });
 
-  container.addEventListener('click', (event) => {
+  root.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-action]');
     if (!btn) return;
     const action = btn.dataset.action;
@@ -125,7 +125,7 @@ function renderWorkoutForm(container, workout, refresh) {
   body.appendChild(actions);
 
   container.appendChild(body);
-  bindWorkoutEvents(container, workout, refresh);
+  bindWorkoutEvents(body, workout, refresh);
 }
 
 export function renderNewWorkout(container, dayId, refresh) {
@@ -135,7 +135,8 @@ export function renderNewWorkout(container, dayId, refresh) {
     container.innerHTML = '<section class="card"><p>Trainingstag nicht gefunden.</p></section>';
     return;
   }
-  const workout = newWorkoutFromDay(day);
+  const existing = getWorkouts().find((w) => w.dayId === day.id && w.date === todayISO());
+  const workout = existing || newWorkoutFromDay(day);
   const intro = document.createElement('section');
   intro.className = 'card new-workout-intro';
   intro.innerHTML = `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} Übung(en) laut Plan – trage Gewicht und Wiederholungen pro Satz ein.</p>`;
