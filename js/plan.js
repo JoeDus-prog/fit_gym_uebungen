@@ -1,5 +1,5 @@
 import { getPlan, savePlan, emptyPlan } from './store.js';
-import { esc, uid, toast, formatTime, targetSecondsOf } from './util.js';
+import { esc, uid, toast, targetSecondsOf } from './util.js';
 
 function renderDayForm(day, onSave, onCancel) {
   const overlay = document.createElement('div');
@@ -42,7 +42,7 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
         <span>Zielart der Übung</span>
         <select name="goalMode">
           <option value="weight" ${exercise?.goalMode !== 'time' ? 'selected' : ''}>Ziel-Gewicht (kg)</option>
-          <option value="time" ${exercise?.goalMode === 'time' ? 'selected' : ''}>Zeitvorgabe (min/sec)</option>
+          <option value="time" ${exercise?.goalMode === 'time' ? 'selected' : ''}>Zeitvorgabe (Sekunden)</option>
         </select>
       </label>
       <div class="field-grid">
@@ -60,16 +60,10 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
             <input type="number" name="targetWeight" min="0" step="0.5" inputmode="decimal" placeholder="z. B. 40" value="${esc(exercise?.targetWeight ?? '')}">
           </label>
         </span>
-        <span class="field-grid goal-time ${exercise?.goalMode === 'time' ? '' : 'hidden'}">
-          <label class="field">
-            <span>Zeitvorgabe (Minuten)</span>
-            <input type="number" name="targetMinutes" min="0" max="600" inputmode="numeric" placeholder="z. B. 1" value="${esc(exercise?.targetMinutes ?? '')}">
-          </label>
-          <label class="field">
-            <span>Zeitvorgabe (Sekunden)</span>
-            <input type="number" name="targetSeconds" min="0" max="59" inputmode="numeric" placeholder="z. B. 30" value="${esc(exercise?.targetSeconds ?? '')}">
-          </label>
-        </span>
+        <label class="field goal-time ${exercise?.goalMode === 'time' ? '' : 'hidden'}">
+          <span>Zeitvorgabe (Sekunden)</span>
+          <input type="number" name="targetSeconds" min="0" max="3600" inputmode="numeric" placeholder="z. B. 90" value="${esc(exercise?.targetSeconds ?? '')}">
+        </label>
       </div>
       <label class="field">
         <span>Notiz (optional)</span>
@@ -101,7 +95,6 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
       targetSets: Math.max(1, Number(overlay.querySelector('[name="targetSets"]').value) || 3),
       targetReps: timed ? null : (Number(overlay.querySelector('[name="targetReps"]').value) || null),
       targetWeight: Number(overlay.querySelector('[name="targetWeight"]').value) || null,
-      targetMinutes: timed ? (Number(overlay.querySelector('[name="targetMinutes"]').value) || null) : null,
       targetSeconds: timed ? (Number(overlay.querySelector('[name="targetSeconds"]').value) || null) : null,
       note: overlay.querySelector('[name="note"]').value.trim()
     };
@@ -139,7 +132,7 @@ export function renderPlan(container, refresh) {
       <li class="exercise-row">
         <div class="exercise-info">
           <strong>${esc(ex.name)}</strong>
-          <span class="muted">${esc(ex.targetSets)} Sätze${ex.goalMode === 'time' ? (targetSecondsOf(ex) > 0 ? ` × ${esc(formatTime(targetSecondsOf(ex)))}` : '') : `${ex.targetReps ? ` × ${esc(ex.targetReps)} Wdh.` : ''}${ex.targetWeight ? ` @ ${esc(ex.targetWeight)} kg` : ''}`}${ex.note ? ` · ${esc(ex.note)}` : ''}</span>
+          <span class="muted">${esc(ex.targetSets)} Sätze${ex.goalMode === 'time' ? (targetSecondsOf(ex) > 0 ? ` × ${esc(targetSecondsOf(ex))} Sek.` : '') : `${ex.targetReps ? ` × ${esc(ex.targetReps)} Wdh.` : ''}${ex.targetWeight ? ` @ ${esc(ex.targetWeight)} kg` : ''}`}${ex.note ? ` · ${esc(ex.note)}` : ''}</span>
         </div>
         <div class="row-actions inline">
           <button class="btn small secondary" data-action="edit-exercise" data-day="${day.id}" data-exercise="${ex.id}" aria-label="Übung bearbeiten">✏️</button>
