@@ -36,7 +36,7 @@ function route() {
   if (newMatch) {
     renderNav('#/training');
     app.innerHTML = '';
-    renderNewWorkout(app, newMatch[1], refresh);
+    renderNewWorkout(app, newMatch[1]);
     currentRoute = '#/training';
     return;
   }
@@ -44,7 +44,7 @@ function route() {
   if (editMatch) {
     renderNav('#/overview');
     app.innerHTML = '';
-    renderEditWorkout(app, editMatch[1], refresh);
+    renderEditWorkout(app, editMatch[1]);
     currentRoute = '#/overview';
     return;
   }
