@@ -45,8 +45,8 @@ function renderSetRows(entry) {
   }).join('');
 }
 
-function bindWorkoutEvents(container, workout, refresh) {
-  container.addEventListener('input', (event) => {
+function bindWorkoutEvents(root, workout, refresh) {
+  root.addEventListener('input', (event) => {
     const row = event.target.closest('.set-row');
     if (!row) return;
     const entry = workout.entries.find((e) => e.exerciseId === row.dataset.entry);
@@ -63,13 +63,13 @@ function bindWorkoutEvents(container, workout, refresh) {
     }
   });
 
-  container.addEventListener('change', (event) => {
+  root.addEventListener('change', (event) => {
     if (event.target.matches('[data-workout-field]')) {
       workout[event.target.dataset.workoutField] = event.target.value;
     }
   });
 
-  container.addEventListener('click', (event) => {
+  root.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-action]');
     if (!btn) return;
     const action = btn.dataset.action;
@@ -156,7 +156,7 @@ function renderWorkoutForm(container, workout, refresh) {
   body.appendChild(actions);
 
   container.appendChild(body);
-  bindWorkoutEvents(container, workout, refresh);
+  bindWorkoutEvents(body, workout, refresh);
 }
 
 function renderWorkoutScreen(container, workout, introHtml) {
@@ -182,8 +182,9 @@ export function renderNewWorkout(container, dayId) {
     container.innerHTML = '<section class="card"><p>Trainingstag nicht gefunden.</p></section>';
     return;
   }
-  const workout = newWorkoutFromDay(day);
-  renderWorkoutScreen(container, workout, `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} \u00dcbung(en) laut Plan \u2013 trage Gewicht und Wiederholungen bzw. Dauer pro Satz ein.</p>`);
+  const existing = getWorkouts().find((w) => w.dayId === day.id && w.date === todayISO());
+  const workout = existing || newWorkoutFromDay(day);
+  renderWorkoutScreen(container, workout, `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} Übung(en) laut Plan – trage Gewicht und Wiederholungen bzw. Dauer pro Satz ein.</p>`);
 }
 
 export function renderEditWorkout(container, workoutId) {
