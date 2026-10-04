@@ -5,7 +5,11 @@ import { esc, formatDate, volumeOf, numberFormat, toast } from './util.js';
 function summarizeWorkout(workout) {
   const sets = workout.entries.reduce((n, e) => n + e.sets.length, 0);
   const done = workout.entries.reduce(
-    (n, e) => n + e.sets.filter((s) => Number(s.weight) > 0 && Number(s.reps) > 0).length, 0
+    (n, e) => n + e.sets.filter((s) => (
+      e.goalMode === 'time'
+        ? Number(s.seconds) > 0
+        : Number(s.weight) > 0 && Number(s.reps) > 0
+    )).length, 0
   );
   return { sets, done };
 }
