@@ -184,13 +184,7 @@ export function renderNewWorkout(container, dayId) {
   }
   const existing = getWorkouts().find((w) => w.dayId === day.id && w.date === todayISO());
   const workout = existing || newWorkoutFromDay(day);
-  const intro = document.createElement('section');
-  intro.className = 'card new-workout-intro';
-  intro.innerHTML = `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} Übung(en) laut Plan – trage Gewicht und Wiederholungen pro Satz ein.</p>`;
-  container.appendChild(intro);
-  renderWorkoutForm(container, workout, refresh);
-  const workout = newWorkoutFromDay(day);
-  renderWorkoutScreen(container, workout, `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} \u00dcbung(en) laut Plan \u2013 trage Gewicht und Wiederholungen bzw. Dauer pro Satz ein.</p>`);
+  renderWorkoutScreen(container, workout, `<h2>Training: ${esc(day.name)}</h2><p class="muted">${day.exercises.length} Übung(en) laut Plan – trage Gewicht und Wiederholungen bzw. Dauer pro Satz ein.</p>`);
 }
 
 export function renderEditWorkout(container, workoutId) {
