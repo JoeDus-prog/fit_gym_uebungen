@@ -36,17 +36,10 @@ export function numberFormat(value) {
 }
 
 export function targetSecondsOf(entry) {
-  const minutes = Number(entry.targetMinutes) || 0;
-  const seconds = Number(entry.targetSeconds) || 0;
-  return minutes * 60 + seconds;
+  return Number(entry.targetSeconds) || 0;
 }
 
-export function formatTime(totalSeconds) {
-  const total = Math.max(0, Math.round(Number(totalSeconds) || 0));
-  const minutes = Math.floor(total / 60);
-  const seconds = total % 60;
-  return `${minutes}:${String(seconds).padStart(2, '0')} min`;
-}
+
 
 export function toast(message) {
   const el = document.createElement('div');
