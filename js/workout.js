@@ -30,14 +30,15 @@ function newWorkoutFromDay(day) {
 function renderSetRows(entry) {
   const timed = entry.goalMode === 'time';
   return entry.sets.map((set, i) => {
-    const valueCell = timed
-      ? `<td><input type="number" inputmode="numeric" min="0" placeholder="Sek." value="${esc(set.seconds)}" data-field="seconds" aria-label="Dauer in Sekunden Satz ${i + 1}"></td>`
-      : `<td><input type="number" inputmode="numeric" min="0" placeholder="Wdh." value="${esc(set.reps)}" data-field="reps" aria-label="Wiederholungen Satz ${i + 1}"></td>`;
+    const valueCells = timed
+      ? `<td><input type="number" inputmode="numeric" min="0" placeholder="Sek." value="${esc(set.seconds)}" data-field="seconds" aria-label="Dauer in Sekunden Satz ${i + 1}"></td>
+        <td><input type="number" inputmode="numeric" min="0" placeholder="Wdh." value="${esc(set.reps)}" data-field="reps" aria-label="Wiederholungen Satz ${i + 1}"></td>`
+      : `<td><input type="number" inputmode="decimal" step="0.5" min="0" placeholder="kg" value="${esc(set.weight)}" data-field="weight" aria-label="Gewicht Satz ${i + 1}"></td>
+        <td><input type="number" inputmode="numeric" min="0" placeholder="Wdh." value="${esc(set.reps)}" data-field="reps" aria-label="Wiederholungen Satz ${i + 1}"></td>`;
     return `
       <tr class="set-row" data-entry="${entry.exerciseId}" data-index="${i}">
         <td class="set-label">${i + 1}</td>
-        <td><input type="number" inputmode="decimal" step="0.5" min="0" placeholder="kg" value="${esc(set.weight)}" data-field="weight" aria-label="Gewicht Satz ${i + 1}"></td>
-        ${valueCell}
+        ${valueCells}
         <td><button class="btn small danger icon-btn" data-action="remove-set" aria-label="Satz l\u00f6schen">\u2715</button></td>
       </tr>`;
   }).join('');
@@ -139,7 +140,7 @@ function renderWorkoutForm(container, workout, refresh) {
         ${targetInfo ? `<span class="muted">${targetInfo}</span>` : ''}
       </header>
       <table class="sets-table">
-        <thead><tr><th scope="col">Satz</th><th scope="col">Gewicht (kg)</th><th scope="col">${timed ? 'Dauer (Sekunden)' : 'Wiederholungen'}</th><th scope="col"></th></tr></thead>
+        <thead><tr><th scope="col">Satz</th><th scope="col">${timed ? 'Dauer (Sekunden)' : 'Gewicht (kg)'}</th><th scope="col">Wiederholungen</th><th scope="col"></th></tr></thead>
         <tbody>${renderSetRows(entry)}</tbody>
       </table>
       <button class="btn secondary small add-set-btn" data-action="add-set" data-entry="${entry.exerciseId}">+ Satz</button>`;
