@@ -179,7 +179,7 @@ export function renderPlan(container, refresh) {
     }, closeOverlay);
   });
 
-  container.addEventListener('click', (event) => {
+  list.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-action]');
     if (!btn) return;
     const action = btn.dataset.action;
