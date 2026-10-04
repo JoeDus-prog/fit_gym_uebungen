@@ -230,3 +230,11 @@ input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
   pointer-events: none;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.hidden { display: none !important; }
+
+.time-cell input {
+  width: 64px;
+  display: inline-block;
+}
+.time-colon { padding: 0 2px; }

@@ -1,5 +1,5 @@
 import { getPlan, savePlan, emptyPlan } from './store.js';
-import { esc, uid, toast } from './util.js';
+import { esc, uid, toast, formatTime, targetSecondsOf } from './util.js';
 
 function renderDayForm(day, onSave, onCancel) {
   const overlay = document.createElement('div');
@@ -38,19 +38,38 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
         <span>Name der Übung</span>
         <input type="text" name="name" required placeholder="z. B. Bankdrücken" value="${esc(exercise?.name ?? '')}">
       </label>
+      <label class="field">
+        <span>Zielart der Übung</span>
+        <select name="goalMode">
+          <option value="weight" ${exercise?.goalMode !== 'time' ? 'selected' : ''}>Ziel-Gewicht (kg)</option>
+          <option value="time" ${exercise?.goalMode === 'time' ? 'selected' : ''}>Zeitvorgabe (min/sec)</option>
+        </select>
+      </label>
       <div class="field-grid">
         <label class="field">
           <span>Geplante Sätze</span>
           <input type="number" name="targetSets" min="1" max="20" inputmode="numeric" value="${esc(exercise?.targetSets ?? 3)}">
         </label>
-        <label class="field">
-          <span>Ziel-Wiederholungen</span>
-          <input type="number" name="targetReps" min="0" max="100" inputmode="numeric" placeholder="z. B. 10" value="${esc(exercise?.targetReps ?? '')}">
-        </label>
-        <label class="field">
-          <span>Ziel-Gewicht (kg)</span>
-          <input type="number" name="targetWeight" min="0" step="0.5" inputmode="decimal" placeholder="z. B. 40" value="${esc(exercise?.targetWeight ?? '')}">
-        </label>
+        <span class="field-grid goal-weight ${exercise?.goalMode === 'time' ? 'hidden' : ''}">
+          <label class="field">
+            <span>Ziel-Wiederholungen</span>
+            <input type="number" name="targetReps" min="0" max="100" inputmode="numeric" placeholder="z. B. 10" value="${esc(exercise?.targetReps ?? '')}">
+          </label>
+          <label class="field">
+            <span>Ziel-Gewicht (kg)</span>
+            <input type="number" name="targetWeight" min="0" step="0.5" inputmode="decimal" placeholder="z. B. 40" value="${esc(exercise?.targetWeight ?? '')}">
+          </label>
+        </span>
+        <span class="field-grid goal-time ${exercise?.goalMode === 'time' ? '' : 'hidden'}">
+          <label class="field">
+            <span>Zeitvorgabe (Minuten)</span>
+            <input type="number" name="targetMinutes" min="0" max="600" inputmode="numeric" placeholder="z. B. 1" value="${esc(exercise?.targetMinutes ?? '')}">
+          </label>
+          <label class="field">
+            <span>Zeitvorgabe (Sekunden)</span>
+            <input type="number" name="targetSeconds" min="0" max="59" inputmode="numeric" placeholder="z. B. 30" value="${esc(exercise?.targetSeconds ?? '')}">
+          </label>
+        </span>
       </div>
       <label class="field">
         <span>Notiz (optional)</span>
@@ -61,6 +80,13 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
         <button type="button" class="btn primary" data-action="save">Speichern</button>
       </div>
     </div>`;
+  const weightFields = overlay.querySelector('.goal-weight');
+  const timeFields = overlay.querySelector('.goal-time');
+  overlay.querySelector('[name="goalMode"]').addEventListener('change', (event) => {
+    const timed = event.target.value === 'time';
+    weightFields.classList.toggle('hidden', timed);
+    timeFields.classList.toggle('hidden', !timed);
+  });
   overlay.querySelector('[data-action="cancel"]').addEventListener('click', () => onCancel(overlay));
   overlay.querySelector('[data-action="save"]').addEventListener('click', () => {
     const name = overlay.querySelector('[name="name"]').value.trim();
@@ -68,11 +94,15 @@ function renderExerciseForm(dayId, exercise, onSave, onCancel) {
       overlay.querySelector('[name="name"]').focus();
       return;
     }
+    const timed = overlay.querySelector('[name="goalMode"]').value === 'time';
     const data = {
       name,
+      goalMode: timed ? 'time' : 'weight',
       targetSets: Math.max(1, Number(overlay.querySelector('[name="targetSets"]').value) || 3),
-      targetReps: Number(overlay.querySelector('[name="targetReps"]').value) || null,
+      targetReps: timed ? null : (Number(overlay.querySelector('[name="targetReps"]').value) || null),
       targetWeight: Number(overlay.querySelector('[name="targetWeight"]').value) || null,
+      targetMinutes: timed ? (Number(overlay.querySelector('[name="targetMinutes"]').value) || null) : null,
+      targetSeconds: timed ? (Number(overlay.querySelector('[name="targetSeconds"]').value) || null) : null,
       note: overlay.querySelector('[name="note"]').value.trim()
     };
     onSave(overlay, data);
@@ -109,7 +139,7 @@ export function renderPlan(container, refresh) {
       <li class="exercise-row">
         <div class="exercise-info">
           <strong>${esc(ex.name)}</strong>
-          <span class="muted">${esc(ex.targetSets)} Sätze${ex.targetReps ? ` × ${esc(ex.targetReps)} Wdh.` : ''}${ex.targetWeight ? ` @ ${esc(ex.targetWeight)} kg` : ''}${ex.note ? ` · ${esc(ex.note)}` : ''}</span>
+          <span class="muted">${esc(ex.targetSets)} Sätze${ex.goalMode === 'time' ? (targetSecondsOf(ex) > 0 ? ` × ${esc(formatTime(targetSecondsOf(ex)))}` : '') : `${ex.targetReps ? ` × ${esc(ex.targetReps)} Wdh.` : ''}${ex.targetWeight ? ` @ ${esc(ex.targetWeight)} kg` : ''}`}${ex.note ? ` · ${esc(ex.note)}` : ''}</span>
         </div>
         <div class="row-actions inline">
           <button class="btn small secondary" data-action="edit-exercise" data-day="${day.id}" data-exercise="${ex.id}" aria-label="Übung bearbeiten">✏️</button>
