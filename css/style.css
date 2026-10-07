@@ -253,3 +253,11 @@ input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 .delta-arrow { font-size: 1.1rem; }
 .compare-table td, .compare-table th { padding: 6px 8px; font-size: 0.85rem; }
 .compare-exercise { margin-bottom: 12px; }
+
+/* Vergleich: klickbare Diagrammpunkte und Datum-Links */
+.chart-point { cursor: pointer; }
+.chart-point circle { fill: var(--primary); transition: r 0.15s ease; }
+.chart-point:hover circle { r: 7; fill: var(--primary-strong); }
+.chart-point:focus-visible circle { stroke: var(--text); stroke-width: 2; }
+.compare-date-link { color: var(--primary); text-decoration: none; font-weight: 600; }
+.compare-filter { margin-bottom: 0; }
