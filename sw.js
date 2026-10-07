@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gym-trainingsplan-v5';
+const CACHE_NAME = 'gym-trainingsplan-v6';
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const APP_SHELL = [
   './js/plan.js',
   './js/workout.js',
   './js/overview.js',
+  './js/compare.js',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png'

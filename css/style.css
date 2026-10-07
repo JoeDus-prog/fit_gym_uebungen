@@ -238,3 +238,18 @@ input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
   display: inline-block;
 }
 .time-colon { padding: 0 2px; }
+
+/* Vergleich (Reiter Vergleich) */
+.chart { width: 100%; height: auto; display: block; margin: 10px 0 6px; }
+.chart-grid { stroke: var(--border); stroke-width: 1; }
+.chart-line { fill: none; stroke: var(--primary); stroke-width: 2; }
+.chart-dot { fill: var(--primary); }
+.chart-value { fill: var(--text); font-size: 10px; }
+.chart-label { fill: var(--muted); font-size: 9px; }
+.compare-delta { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; font-weight: 600; }
+.compare-delta.up { color: #4ade80; }
+.compare-delta.down { color: var(--danger); }
+.compare-delta.same { color: var(--muted); font-weight: 400; }
+.delta-arrow { font-size: 1.1rem; }
+.compare-table td, .compare-table th { padding: 6px 8px; font-size: 0.85rem; }
+.compare-exercise { margin-bottom: 12px; }
