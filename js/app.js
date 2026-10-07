@@ -1,6 +1,7 @@
 import { renderPlan } from './plan.js';
 import { renderNewWorkout, renderEditWorkout } from './workout.js';
 import { renderOverview, renderWorkoutPicker } from './overview.js';
+import { renderCompare } from './compare.js';
 
 const app = document.getElementById('app');
 const nav = document.getElementById('nav');
@@ -8,7 +9,8 @@ const nav = document.getElementById('nav');
 const routes = [
   { hash: '#/plan', label: 'Plan', icon: '📋', render: (refresh) => renderPlan(app, refresh) },
   { hash: '#/training', label: 'Training', icon: '🏋️', render: (refresh) => renderWorkoutPicker(app) },
-  { hash: '#/overview', label: 'Übersicht', icon: '📊', render: (refresh) => renderOverview(app, refresh) }
+  { hash: '#/overview', label: 'Übersicht', icon: '📊', render: (refresh) => renderOverview(app, refresh) },
+  { hash: '#/compare', label: 'Vergleich', icon: '📈', render: () => renderCompare(app) }
 ];
 
 let currentRoute = null;
